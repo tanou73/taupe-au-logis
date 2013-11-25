@@ -26,7 +26,9 @@ public class GameScreen implements Screen {
 	public void show() {
 		batch = new SpriteBatch();
 		
+		// Init le sprit de la taupe
 		
+		// thread du jeu
 		
 	}
 
