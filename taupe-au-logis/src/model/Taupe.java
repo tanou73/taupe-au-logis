@@ -1,4 +1,4 @@
-package modele;
+package model;
 
 public class Taupe {
 	private int posX;

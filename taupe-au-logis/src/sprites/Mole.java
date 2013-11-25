@@ -1,12 +1,13 @@
 package sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class Mole extends Sprite {
-	private int posX;
-	private int posY;
+	private float posX;
+	private float posY;
 	private Texture region;
 	private float height;
 	private float width;	
@@ -14,26 +15,30 @@ public class Mole extends Sprite {
 	public Mole(Texture region, float height, float width) {
 		super();
 		this.region = region;
+		super.setRegion(region);
 		this.height = height;
 		this.width = width;
+		super.setSize(width, height);
 	}
 
-	public int getPosX() {
+	public float getPosX() {
 		return posX;
 	}
 
 
-	public void setPosX(int posX) {
+	public void setPosX(float posX) {
+		super.setPosition(posX, posY);
 		this.posX = posX;
 	}
 
 
-	public int getPosY() {
+	public float getPosY() {
 		return posY;
 	}
 
 
-	public void setPosY(int posY) {
+	public void setPosY(float posY) {
+		super.setPosition(posX, posY);
 		this.posY = posY;
 	}
 
@@ -65,5 +70,11 @@ public class Mole extends Sprite {
 
 	public void setWidth(float width) {
 		this.width = width;
+	}
+
+	public void setPos(Vector2 pos) {
+		this.posX = pos.x * (Gdx.graphics.getWidth()/3);
+		this.posY = pos.y * (Gdx.graphics.getHeight()/3);
+		super.setPosition(posX, posY);
 	}
 }
