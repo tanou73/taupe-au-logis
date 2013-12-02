@@ -6,9 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GameUtil {
 	public static final int NB_ANWSER = 3;
-	public static final int NB_ROW = 2;
+	public static final int NB_ROW = 1;
 	public static final int NB_COL = 3;
-	
+
 	public static int pickRandomAnswer(){
 		Random r = new Random();
 		int valeur = r.nextInt(NB_ANWSER);
@@ -20,6 +20,15 @@ public class GameUtil {
 		Random r = new Random();
 		res.x = r.nextInt(NB_COL);
 		res.y = r.nextInt(NB_ROW);
+		return res;
+	}
+	
+	public static int pickRandomPosition(int current){		
+		Random r = new Random();
+		int res;
+		do {
+			res = r.nextInt(NB_COL);
+		} while (res == current);
 		return res;
 	}
 }
