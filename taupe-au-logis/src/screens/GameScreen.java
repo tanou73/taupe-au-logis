@@ -1,7 +1,9 @@
 package screens;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import sprites.Life;
 import sprites.Mole;
 import tween.SpriteAccessor;
 import utils.GameUtil;
@@ -40,7 +42,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private float timelapse;
 	/** Tween manager **/
 	private TweenManager tweenManager;
-	/** current mole which stand : 0 = Left, 1 = Center, 2 = Right**/
+	/** current mole which stand : 0 = Left, 1 = Center, 2 = Right **/
 	private int moleNumber;
 	/** atlas texture and skin **/
 	private Skin skin;
@@ -54,8 +56,8 @@ public class GameScreen implements Screen, InputProcessor {
 	private Date startDate;
 	/** number of "life" the player has left **/
 	private int life;
-	
-	private float x, y;
+	/** life **/
+	private ArrayList<Life> lifes;
 
 	@Override
 	public void render(float delta) {
@@ -68,13 +70,6 @@ public class GameScreen implements Screen, InputProcessor {
 		if (controller.changeQuestion()) {
 			changeQuestion();
 		}
-		try {
-		ShapeRenderer shapeRenderer = new ShapeRenderer();
-		 shapeRenderer.begin(ShapeType.Line);
-		 shapeRenderer.setColor(1, 1, 0, 1);
-		 shapeRenderer.circle(this.x, this.y, 5);
-		 shapeRenderer.end();
-		} catch (Exception e) {}
 
 		timelapse += delta;
 		if (timelapse > 3) {
@@ -83,61 +78,57 @@ public class GameScreen implements Screen, InputProcessor {
 
 		batch.begin();
 		drawMoles();
+		for (int i = 0; i < lifes.size(); i++) {
+			lifes.get(i).setPosition(Gdx.graphics.getWidth() - (i*PosUtil.xUnite(35) + PosUtil.xUnite(35)), PosUtil.yUnite(35));
+			lifes.get(i).draw(batch);
+		}
 		batch.end();
 	}
 
 	@SuppressWarnings("deprecation")
 	public void checkEvent(float x, float y) {
-		if (!controller.hasLost()) {	
-			/*
-			Rectangle moleRHitBox = new Rectangle(
-					moleR.getX()-(moleR.getWidth()/2), 
-					moleR.getY()-(moleR.getHeight()/2),
-					moleR.getWidth(), 
-					moleR.getHeight());
-			
-			Rectangle moleCHitBox = new Rectangle(
-					moleC.getX()-(moleC.getWidth()/2), 
-					moleC.getY()-(moleC.getHeight()/2),
-					moleC.getWidth(), 
-					moleC.getHeight());
-			
-			Rectangle moleLHitBox = new Rectangle(
-					moleL.getX()-(moleL.getWidth()/2), 
-					moleL.getY()-(moleL.getHeight()/2),
-					moleL.getWidth(), 
-					moleL.getHeight()); */
-			
-			System.out.println("x : " +x+ " y : "+ y);
-			
-			System.out.println("MoleL : "+moleL.getBoundingRectangle().x + " y: "+moleL.getBoundingRectangle().y);
-			int isRight = -1;		
-			if (moleR.getBoundingRectangle().contains(x, y) && (moleNumber == 2)) {
+		if (!controller.hasLost()) {
+			int isRight = -1;
+			if (moleR.getBoundingRectangle().contains(x, y)
+					&& (moleNumber == 2)) {
 				isRight = controller.checkAnswer(moleR.getAnswer());
-			} 
-			else if (moleC.getBoundingRectangle().contains(x, y) && moleNumber == 1) {
+				if (isRight == 1)
+					moleR.getWordToDisplay().setColor(Color.GREEN);
+				else
+					moleR.getWordToDisplay().setColor(Color.RED);
+			} else if (moleC.getBoundingRectangle().contains(x, y)
+					&& moleNumber == 1) {
 				isRight = controller.checkAnswer(moleC.getAnswer());
-			} 
-			else if (moleL.getBoundingRectangle().contains(x, y) && moleNumber == 0) {
+				if (isRight == 1)
+					moleC.getWordToDisplay().setColor(Color.GREEN);
+				else
+					moleC.getWordToDisplay().setColor(Color.RED);
+			} else if (moleL.getBoundingRectangle().contains(x, y)
+					&& moleNumber == 0) {
 				isRight = controller.checkAnswer(moleL.getAnswer());
+				if (isRight == 1)
+					moleL.getWordToDisplay().setColor(Color.GREEN);
+				else
+					moleL.getWordToDisplay().setColor(Color.RED);
 			}
-	
+
 			switch (isRight) {
 			case 1:
-				questionLabel.setColor(Color.GREEN);
-				if (controller.isFinished()){
+				if (controller.isFinished()) {
 					System.out.println("finished");
 					Date now = new Date();
-					Date time = new Date(startDate.getTime() - now.getTime());				
-					questionLabel.setText("Bravo ! Vous avez gagné en "+ (now.getTime() - startDate.getTime())/1000 +" secondes");
+					Date time = new Date(startDate.getTime() - now.getTime());
+					questionLabel.setText("Bravo ! Vous avez gagné en "
+							+ (now.getTime() - startDate.getTime()) / 1000
+							+ " secondes");
 				} else {
 					controller.setChangeQuestion(true);
 				}
 				break;
 			case 0:
-				questionLabel.setColor(Color.RED);
 				life--;
-				if (life > 0){
+				lifes.remove(lifes.size() -1);
+				if (life > 0) {
 					timelapse = 20;
 				} else {
 					questionLabel.setText("Dommage ! Vous avez perdu ...");
@@ -191,12 +182,16 @@ public class GameScreen implements Screen, InputProcessor {
 		String word = "word";
 
 		// animate the mole
-		if (moleNumber == 0)
+		if (moleNumber == 0) {
+			moleL.getWordToDisplay().setColor(Color.WHITE);
 			moleL.animateIn(tweenManager);
-		else if (moleNumber == 1)
+		} else if (moleNumber == 1) {
+			moleC.getWordToDisplay().setColor(Color.WHITE);
 			moleC.animateIn(tweenManager);
-		else if (moleNumber == 2)
+		} else if (moleNumber == 2) {
+			moleR.getWordToDisplay().setColor(Color.WHITE);
 			moleR.animateIn(tweenManager);
+		}
 
 		timelapse = 0;
 	}
@@ -210,7 +205,7 @@ public class GameScreen implements Screen, InputProcessor {
 		batch = new SpriteBatch();
 
 		Gdx.input.setInputProcessor(this);
-		
+
 		controller = new GameCtrl();
 
 		timelapse = 0;
@@ -226,24 +221,29 @@ public class GameScreen implements Screen, InputProcessor {
 
 		questionLabel = new Label("", skin, "big");
 		questionLabel.setFontScale(PosUtil.xUnite(0.7f), PosUtil.yUnite(0.7f));
-		questionLabel.setPosition(PosUtil.xUnite(10), Gdx.graphics.getHeight() - 200);
-		Label textToDisplay = new Label("", skin, "default");
-
+		questionLabel.setPosition(PosUtil.xUnite(10),
+				Gdx.graphics.getHeight() - 200);
+		
 		// Init le sprite de la taupe
 		moleR = new Mole(new Texture(Gdx.files.internal("img/mole.png")), 300,
-				300, textToDisplay);
+				300, new Label("", skin, "default"));
 		moleR.setPosX(100);
 		moleR.setPosY(0);
 
 		moleC = new Mole(new Texture(Gdx.files.internal("img/mole.png")), 300,
-				300, textToDisplay);
+				300, new Label("", skin, "default"));
 		moleC.setPosX(433);
 		moleC.setPosY(0);
 
 		moleL = new Mole(new Texture(Gdx.files.internal("img/mole.png")), 300,
-				300, textToDisplay);
+				300, new Label("", skin, "default"));
 		moleL.setPosX(766);
 		moleL.setPosY(0);
+		
+		lifes = new ArrayList<Life>();
+		for (int i = 0; i < 3; i++) {
+			lifes.add(new Life());
+		}
 
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Sprite.class, new SpriteAccessor());
@@ -289,11 +289,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		this.x = screenX;
-		this.y = Gdx.graphics.getHeight() - screenY;
-		System.out.println("capture x --> "+screenX+" ---> y "+screenY);
-		checkEvent( screenX, 
-				Gdx.graphics.getHeight() - screenY); 
+		checkEvent(screenX, Gdx.graphics.getHeight() - screenY);
 		return false;
 	}
 
