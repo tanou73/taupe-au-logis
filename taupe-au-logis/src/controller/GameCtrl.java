@@ -10,10 +10,12 @@ public class GameCtrl extends InputListener {
 	private ArrayList<Question> questions;
 	private int currentQuestion;
 	private boolean changeQuestion;
+	private boolean hasLost;
 	
 	public GameCtrl() {
 		questions = new ArrayList<Question>();
 		changeQuestion = true;
+		hasLost = false;
 		
 		Question q1 = new Question("Le panda est en voie ");
 		q1.addAnswer("d'expulsion");
@@ -36,6 +38,21 @@ public class GameCtrl extends InputListener {
 		currentQuestion = -1;
 	}
 	
+	public boolean isFinished() {
+		if (questions.size() <= (currentQuestion+1))
+			return true;
+		else
+			return false;
+	}
+	
+	public void lost(){
+		hasLost = true;
+	}
+	
+	public boolean hasLost(){
+		return this.hasLost;
+	}
+	
 	public Question getNextQuestion(){
 		changeQuestion = false;
 		return questions.get(++currentQuestion);
@@ -50,9 +67,12 @@ public class GameCtrl extends InputListener {
 		return changeQuestion;
 	}
 	
+	public void setChangeQuestion(boolean value){
+		changeQuestion = value;
+	}
+	
 	public int checkAnswer(String answer){
 		if (answer.equals(questions.get(currentQuestion).getRightAnswer())) {
-			changeQuestion = true;
 			return 1;
 		} else {
 			return 0;

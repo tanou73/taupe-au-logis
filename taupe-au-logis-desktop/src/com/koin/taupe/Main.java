@@ -9,8 +9,8 @@ public class Main {
 		cfg.title = "taupe-au-logis";
 		cfg.vSyncEnabled = true;
 		cfg.useGL20 = true;
-		cfg.width = 1200;
-		cfg.height = 720;
+		cfg.width = 1920;
+		cfg.height = 1080;
 		
 		new LwjglApplication(new TaupeGame(), cfg);
 	}

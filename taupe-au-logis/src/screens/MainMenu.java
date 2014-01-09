@@ -1,6 +1,7 @@
 package screens;
 
 import tween.ActorAccessor;
+import utils.PosUtil;
 import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
@@ -90,7 +91,7 @@ public class MainMenu implements Screen {
 		textButtonStyle.font = black;
 
 		buttonPlay = new TextButton("Jouer", textButtonStyle);
-		buttonPlay.pad(20);
+		buttonPlay.pad(PosUtil.xUnite(20));
 		buttonPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -99,7 +100,7 @@ public class MainMenu implements Screen {
 			}
 		});
 		buttonExit = new TextButton("Quitter", textButtonStyle);
-		buttonExit.pad(20);
+		buttonExit.pad(PosUtil.xUnite(20));
 		buttonExit.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -113,18 +114,14 @@ public class MainMenu implements Screen {
 		heading.setFontScale(1.5f);
 
 		// Creating background sprite
-		Texture splashTexture = new Texture("img/bg.png");
-		Sprite splashBg = new Sprite(splashTexture);
-		splashBg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		Texture textBg = new Texture(Gdx.files.internal("img/bg.png"));
 		spriteBg = new Sprite(textBg);
 		spriteBg.setBounds(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 
 		// adding stuffs
-		table.add(heading).spaceBottom(100).row();
-		table.add(buttonPlay).spaceBottom(50).row();
+		table.add(heading).spaceBottom(PosUtil.xUnite(100)).row();
+		table.add(buttonPlay).spaceBottom(PosUtil.xUnite(50)).row();
 		table.add(buttonExit);
 		table.debug();
 		stage.addActor(table);
@@ -152,7 +149,7 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void hide() {
-
+		dispose();
 	}
 
 	@Override
@@ -167,7 +164,13 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void dispose() {
-
+		batch.dispose();
+		stage.dispose();
+		atlas.dispose();
+		skin.dispose();
+		yellow.dispose();
+		black.dispose();
+		spriteBg.getTexture().dispose();
 	}
 
 }

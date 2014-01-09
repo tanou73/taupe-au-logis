@@ -2,6 +2,7 @@ package sprites;
 
 import screens.MainMenu;
 import tween.SpriteAccessor;
+import utils.PosUtil;
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
@@ -30,33 +31,36 @@ public class Mole extends Sprite {
 		
 		this.region = region;
 		super.setRegion(region);
-		this.height = height;
-		this.width = width;
+		this.height = PosUtil.yUnite(height);
+		this.width = PosUtil.xUnite(width);
 
 		greenSquare = new Sprite(new Texture(Gdx.files.internal("img/terrier.png")));
+		greenSquare.setSize(PosUtil.xUnite(greenSquare.getWidth()), PosUtil.yUnite(greenSquare.getHeight()));
+		
 		woodPane = new Sprite(new Texture(Gdx.files.internal("img/woodPane.png")));
 		woodPane.setOrigin(woodPane.getWidth()/2, 0);
+		woodPane.setSize(PosUtil.xUnite(woodPane.getWidth()), PosUtil.yUnite(woodPane.getHeight()));
 		
 		this.wordToDisplay = wordToDisplay;
 		
-		super.setSize(width, height);
+		super.setSize(PosUtil.xUnite(width), PosUtil.yUnite(height));
 	}
 	
 	public void animateIn(final TweenManager tweenManager) {
 		Tween.set(this, SpriteAccessor.POSY).target(0).start(tweenManager);
 		Tween.set(woodPane, SpriteAccessor.DEGREE).target(10).start(tweenManager);
-		Tween.to(this, SpriteAccessor.POSY, 1).target(150).setCallback(new TweenCallback() {
+		Tween.to(this, SpriteAccessor.POSY, 1).target(PosUtil.yUnite(150)).setCallback(new TweenCallback() {
 			
 			@Override
 			public void onEvent(int type, BaseTween<?> source) {
-				Tween.set(woodPane, SpriteAccessor.POSY).target(1000).start(tweenManager);
-				Tween.to(woodPane, SpriteAccessor.POSY, 0.5f).target(150).setCallback(new TweenCallback() {
+				Tween.set(woodPane, SpriteAccessor.POSY).target(PosUtil.yUnite(1000)).start(tweenManager);
+				Tween.to(woodPane, SpriteAccessor.POSY, 0.5f).target(PosUtil.yUnite(150)).setCallback(new TweenCallback() {
 					
 					@Override
 					public void onEvent(int type, BaseTween<?> source) {
 						wordToDisplay.setText(answer);
 						wordToDisplay.setRotation(25);
-						wordToDisplay.setPosition(woodPane.getX() + 50, woodPane.getY()-50);
+						wordToDisplay.setPosition(woodPane.getX() + PosUtil.xUnite(50), woodPane.getY()- PosUtil.yUnite(50));
 						Tween.to(wordToDisplay, SpriteAccessor.ALPHA, 1f).target(1).start(tweenManager);
 					}
 				}).start(tweenManager);
@@ -67,10 +71,10 @@ public class Mole extends Sprite {
 	
 	public void animateOut(final TweenManager tweenManager) {
 		final float posx = this.posX;
-		Tween.set(this, SpriteAccessor.POSY).target(150).start(tweenManager);
+		Tween.set(this, SpriteAccessor.POSY).target(PosUtil.yUnite(150)).start(tweenManager);
 		Tween.to(this, SpriteAccessor.POSY, 1).target(0).start(tweenManager);
 		Tween.to(woodPane, SpriteAccessor.DEGREE, 0.7f).target(90).start(tweenManager);
-		Tween.to(woodPane, SpriteAccessor.POSY, 0.5f).target(-300).delay(0.1f).start(tweenManager);
+		Tween.to(woodPane, SpriteAccessor.POSY, 0.5f).target(PosUtil.yUnite(-300)).delay(0.1f).start(tweenManager);
 		Tween.to(wordToDisplay, SpriteAccessor.ALPHA, 1f).target(0).start(tweenManager);
 	}
 
@@ -80,6 +84,7 @@ public class Mole extends Sprite {
 
 
 	public void setPosX(float posX) {
+		posX = PosUtil.xUnite(posX);
 		super.setPosition(posX, posY);
 		this.posX = posX;
 		updateMasquePos();
@@ -93,6 +98,7 @@ public class Mole extends Sprite {
 
 
 	public void setPosY(float posY) {
+		posY = PosUtil.yUnite(posY);
 		super.setPosition(posX, posY);
 		this.posY = posY;
 	}
@@ -114,6 +120,7 @@ public class Mole extends Sprite {
 
 
 	public void setHeight(float height) {
+		height = PosUtil.yUnite(height);
 		this.height = height;
 	}
 
@@ -124,15 +131,8 @@ public class Mole extends Sprite {
 
 
 	public void setWidth(float width) {
+		height = PosUtil.yUnite(width);
 		this.width = width;
-	}
-
-	public void setPos(Vector2 pos) {
-		this.posX = pos.x * (Gdx.graphics.getWidth()/3);
-		this.posY = pos.y * (Gdx.graphics.getHeight()/3);
-		updateMasquePos();
-		updateWoodPanePos();
-		super.setPosition(posX, posY);
 	}
 	
 	public void updateMasquePos() {
@@ -140,7 +140,7 @@ public class Mole extends Sprite {
 	}
 	
 	public void updateWoodPanePos() {
-		woodPane.setPosition(this.posX - 100, 1000);
+		woodPane.setPosition(this.posX - PosUtil.xUnite(100), PosUtil.yUnite(1000));
 	}
 	
 	public Sprite getMasque() {
